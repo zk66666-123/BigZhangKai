@@ -1,7 +1,7 @@
 // 成就界面：顶部“成就”页面、解锁时从上方滑出的提示。
-import { state } from './state.js?v=5f7e2107';
+import { state } from './state.js?v=ba9e26bd';
 import { $ } from './dom.js?v=5b57db68';
-import { ACHIEVEMENTS, GROUPS, isUnlocked, unlockedCount, onUnlock } from './achievements.js?v=6e59b0e1';
+import { ACHIEVEMENTS, GROUPS, isUnlocked, unlockedCount, onUnlock } from './achievements.js?v=e679748c';
 
 const ACHV_TOAST_MS = 2600;
 let achvQueue = [];

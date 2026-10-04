@@ -5,7 +5,7 @@ import { initCrown } from './draw.js';
 import { isMuted, toggleMuted } from './audio.js';
 import { state } from './state.js';
 import { copyShare, gameOver } from './report.js';
-import { startGame, restoreGame, loop, fit, bindInput, makeKai, debugSnapshot, simulateGames } from './game.js';
+import { startGame, restoreGame, loop, fit, bindInput, makeKai, debugSnapshot, simulateGames, saveNow, useJoySkill } from './game.js';
 import { readSave } from './save.js';
 import { bindRankboard, flushPending } from './rankboard.js';
 import { bindWelcome, showWelcomeIfNeeded, needsWelcome } from './welcome.js';
@@ -16,6 +16,9 @@ import { syncMyAvatar, syncBadges } from './profile.js';
 import { bindAchievements } from './achieve-ui.js';
 import { onMute, unlockedCount } from './achievements.js';
 import { $ } from './dom.js';
+import { isJoy } from './mode.js';
+import { bindJoyUI } from './joy-ui.js';
+import { bindModePicker } from './mode-ui.js';
 
 function renderSoundBtn() {
   const muted = isMuted();
@@ -47,6 +50,8 @@ function bindButtons() {
   bindGroup();
   bindAchievements({ onCountChanged: syncBadges });
   renderSoundBtn();
+  bindJoyUI({ useSkill: useJoySkill, save: saveNow, resize: fit });
+  bindModePicker({ save: saveNow });
 }
 
 function runTestHooks() {
@@ -74,6 +79,7 @@ async function boot() {
   fit();
   bindInput();
   bindButtons();
+  fit();
   await Promise.all([initSkin(), initCrown()]);
   // 有上一局的存档就接着玩（测试链接不恢复，免得干扰）
   const saved = /[?&]test=/.test(location.search) ? null : readSave();
@@ -83,7 +89,7 @@ async function boot() {
   } else {
     startGame();
   }
-  if (!/[?&]test=/.test(location.search)) {
+  if (!isJoy && !/[?&]test=/.test(location.search)) {
     const isNewPlayer = needsWelcome();
     showWelcomeIfNeeded();
     showNoticeIfNew({ isNewPlayer });

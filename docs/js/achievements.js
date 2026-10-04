@@ -1,8 +1,8 @@
 // 成就：定义、触发判断、本机存储。界面在 achieve-ui.js。
 // 游戏各处在发生事件时调用下面的 onXxx，满足条件就解锁；解锁结果存在本机。
 import { MAX, LEVELS, STORAGE_KEYS } from './config.js?v=21648a52';
-import { store } from './skin.js?v=83f93ead';
-import { loadDex } from './dex.js?v=2f5cb32a';
+import { store } from './skin.js?v=aa0c2609';
+import { loadDex } from './dex.js?v=42d8c74e';
 
 const lvOf = name => LEVELS.findIndex(l => l.name === name);
 const QUESHEN = lvOf('雀神楷'), ZHONGZHI = lvOf('中指楷'), WAJUEJI = lvOf('挖掘机楷');

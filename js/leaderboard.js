@@ -2,11 +2,12 @@
 // 每台设备一个随机身份码：昵称第一次被谁占用就归谁，成绩也只能用自己的身份码提交。
 import { LEADERBOARD, MAX, STORAGE_KEYS } from './config.js';
 import { store } from './skin.js';
+import { isJoy } from './mode.js';
 
 const TIMEOUT_MS = 12000;
 const NETWORK_RETRIES = 1;
 
-export const leaderboardEnabled = () => Boolean(LEADERBOARD.url && LEADERBOARD.key);
+export const leaderboardEnabled = () => !isJoy && Boolean(LEADERBOARD.url && LEADERBOARD.key);
 
 // 本机身份码：32 字节随机数，第一次用时生成
 // 存不进 localStorage 时（隐私模式、配额满）至少本次打开期间保持同一个身份
@@ -32,6 +33,7 @@ function networkError(message) {
 
 // 网络不通或超时自动重试；服务器明确拒绝（4xx/5xx）不重试
 async function rpc(fn, args, retries = NETWORK_RETRIES) {
+  if (isJoy) return null;
   try {
     return await rpcOnce(fn, args);
   } catch (err) {

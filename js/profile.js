@@ -1,6 +1,7 @@
 // 自己的头像：本机缓存一份，换头像时同时上传到服务器
 import { STORAGE_KEYS } from './config.js';
 import { store } from './skin.js';
+import { isJoy } from './mode.js';
 import { setAvatar, myProfile, claimName, setBadges } from './leaderboard.js';
 import { avatarEl, makeAvatar } from './avatar.js';
 
@@ -17,6 +18,7 @@ export async function uploadAvatar(dataUrl) {
 
 // 打开游戏时对一下本机和服务器的头像：服务器有、本机没有就拿回来；本机有、服务器没有（之前断网没传上）就补传
 export async function syncMyAvatar() {
+  if (isJoy) return;
   if (!store.get(STORAGE_KEYS.playerName)) return;
   try {
     const p = await myProfile();
@@ -59,6 +61,7 @@ export function renderMeBar(el, { size = 28, onChanged } = {}) {
 // 成就数同步到服务器：解锁后等一会儿再传（连着解锁几个只传一次），连不上就下次再说
 let badgeTimer = 0;
 export function syncBadges(count) {
+  if (isJoy) return;
   if (!count || !store.get(STORAGE_KEYS.playerName)) return;
   clearTimeout(badgeTimer);
   badgeTimer = setTimeout(() => { setBadges(count).catch(() => { /* 下次再传 */ }); }, 1500);

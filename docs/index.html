@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>合成大张楷</title>
-<link rel="stylesheet" href="css/style.css?v=e8e22801">
+<link rel="stylesheet" href="css/style.css?v=aab0d4f0">
 </head>
 <body>
 <div class="top">
@@ -24,8 +24,44 @@
   <span id="toast-text">已恢复上一局</span>
   <button id="btn-toast-restart" type="button">重新开始</button>
 </div>
+<div class="mode-bar">
+  <span id="mode-label">经典模式</span>
+  <button id="btn-mode" type="button">切换模式</button>
+</div>
 <div class="stage"><canvas id="game" aria-label="游戏画布"></canvas></div>
+<section class="joy-panel" id="joy-panel" aria-label="欢乐模式技能" hidden>
+  <div class="energy-row"><b>合成能量</b><progress id="joy-meter" max="100" value="30" aria-label="技能能量"></progress><span id="joy-energy">30 / 100</span></div>
+  <div class="joy-skills">
+    <button id="btn-swap" type="button"><b>↻ 换个人</b><small>35 能量 · 重抽手中角色</small></button>
+    <button id="btn-shake" type="button"><b>≈ 摇一摇</b><small>40 能量 · 松动场上堆叠</small></button>
+  </div>
+  <p id="joy-hint" role="status">每次合成 +8 能量 · 第 5 级选天赋</p>
+  <div id="joy-talents" class="joy-talents" aria-label="本局天赋"></div>
+</section>
 <div class="ladder" id="ladder"></div>
+
+<div class="overlay" id="mode-picker" hidden>
+  <div class="card mode-card" role="dialog" aria-modal="true" aria-labelledby="mode-title">
+    <h2 id="mode-title">今天怎么合？</h2>
+    <p id="mode-current">切换时自动保存本局</p>
+    <a class="mode-option" id="choose-classic" href="?">
+      <span class="mode-option-icon">◉</span><span><b>经典模式</b><small>熟悉的 14 级合成，挑战全班排行榜。</small><em>原版规则 · 原有存档</em></span>
+    </a>
+    <a class="mode-option joy-option" id="choose-joy" href="?mode=joy">
+      <span class="mode-option-icon">✦</span><span><b>欢乐模式 <i>新玩法</i></b><small>合成蓄能、主动技能，每局选择不同天赋。</small><em>第 5 / 9 / 12 级天赋三选一 · 独立本机成绩</em></span>
+    </a>
+    <p>两种模式的进度、最高分、成就和图鉴分别保存。</p>
+    <div class="actions"><button id="mode-close" type="button">返回游戏</button></div>
+  </div>
+</div>
+<div class="overlay" id="talent-picker" hidden>
+  <div class="card talent-card" role="dialog" aria-modal="true" aria-labelledby="talent-title" aria-describedby="talent-desc">
+    <span class="talent-kicker">欢乐模式 · 本局进化</span>
+    <h2 id="talent-title">选一个天赋</h2>
+    <p id="talent-desc">选择期间游戏暂停。天赋本局持续生效，重新开始后重选。</p>
+    <div id="talent-choices" class="talent-choices"></div>
+  </div>
+</div>
 
 <div class="overlay" id="win" hidden>
   <div class="card" style="align-items:center;text-align:center">
@@ -49,6 +85,7 @@
     <label class="sr-only" for="welcome-name">昵称</label>
     <input id="welcome-name" type="text" maxlength="12" placeholder="你的昵称（最多 12 个字）" autocomplete="nickname">
     <button id="btn-welcome" type="button">开始玩</button>
+    <button id="welcome-mode" class="welcome-mode" type="button">切换模式 · 试试欢乐玩法</button>
     <p class="welcome-msg" id="welcome-msg" role="status"></p>
   </div>
 </div>
@@ -125,7 +162,7 @@
 
 <div class="overlay" id="over" hidden>
   <div class="card report">
-    <div class="report-head"><b>合成大张楷 · 战报</b><span id="report-date">10月2日</span></div>
+    <div class="report-head"><b id="report-heading">合成大张楷 · 战报</b><span id="report-date">10月2日</span></div>
     <span class="stamp" id="report-stamp" hidden>新纪录</span>
     <div class="report-body">
       <p class="verdict" id="report-verdict">张楷溢出来了</p>
@@ -143,13 +180,14 @@
         <div><b id="stat-combo">0</b><span>最大连击</span></div>
         <div><b id="stat-time">0:00</b><span>用时</span></div>
       </div>
+      <p id="report-mode-note" class="report-mode-note" hidden></p>
       <p class="report-achv" id="report-achv" hidden></p>
       <div class="dex" id="dex">
         <p class="dex-line" id="dex-line"></p>
         <div class="dex-dots" id="dex-dots"></div>
       </div>
       <div class="board">
-      <h3>本机最好 5 局</h3>
+      <h3 id="board-heading">本机最好 5 局</h3>
       <ol id="board"></ol>
     </div>
       <div class="upload" id="upload" hidden>
@@ -182,6 +220,6 @@
 </div>
 
 <script src="vendor/matter.min.js?v=7f2901e3"></script>
-<script type="module" src="js/main.js?v=30a05903"></script>
+<script type="module" src="js/main.js?v=92380b85"></script>
 </body>
 </html>

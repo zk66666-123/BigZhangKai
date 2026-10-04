@@ -1,10 +1,11 @@
 // 皮肤：每一级的名字、照片和碰撞轮廓。照片统一用 config.js 里的内置照片，玩家不能自己换。
 import { LEVELS, RULES, STORAGE_KEYS } from './config.js?v=21648a52';
 import { traceImage, loadImage } from './trace.js?v=a4757da2';
+import { modeStorageKey } from './mode.js?v=06a4bc39';
 
 export const store = {
-  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } }
+  get(k) { try { return localStorage.getItem(modeStorageKey(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(modeStorageKey(k), v); return true; } catch { return false; } }
 };
 
 const blankSkin = () => LEVELS.map(l => ({ name: l.name, photo: null }));

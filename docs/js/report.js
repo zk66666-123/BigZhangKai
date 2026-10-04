@@ -1,15 +1,17 @@
 // 结算：战报卡、本机前 5、复制战绩，以及合出大张楷时的庆祝画面。
 import { LEVELS, MAX, STORAGE_KEYS, SHARE_URL } from './config.js?v=21648a52';
-import { skin, store } from './skin.js?v=83f93ead';
-import { paintLevel } from './draw.js?v=dc853b14';
-import { sfx } from './audio.js?v=b9710e55';
-import { state } from './state.js?v=5f7e2107';
-import { onRoundOver } from './rankboard.js?v=c9fb7455';
-import { clearSave } from './save.js?v=17e3bab3';
-import { loadDex } from './dex.js?v=2f5cb32a';
-import { onRoundEnd, takeRoundUnlocks } from './achievements.js?v=6e59b0e1';
-import { showRoundUnlocks } from './achieve-ui.js?v=2a181da3';
+import { skin, store } from './skin.js?v=aa0c2609';
+import { paintLevel } from './draw.js?v=ece2ed71';
+import { sfx } from './audio.js?v=9d2e79bf';
+import { state } from './state.js?v=ba9e26bd';
+import { onRoundOver } from './rankboard.js?v=7784491a';
+import { clearSave } from './save.js?v=22768969';
+import { loadDex } from './dex.js?v=42d8c74e';
+import { onRoundEnd, takeRoundUnlocks } from './achievements.js?v=e679748c';
+import { showRoundUnlocks } from './achieve-ui.js?v=b20f1bb9';
 import { $ } from './dom.js?v=5b57db68';
+import { isJoy, modeName } from './mode.js?v=06a4bc39';
+import { TALENTS } from './joy.js?v=add04223';
 
 const BOARD_SIZE = 5;
 
@@ -102,6 +104,13 @@ export function gameOver() {
   const name = skin[topLevel].name;
   const secs = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
 
+  $('report-heading').textContent = isJoy ? '欢乐模式 · 战报' : '合成大张楷 · 战报';
+  $('board-heading').textContent = isJoy ? '欢乐模式 · 本机最好 5 局' : '本机最好 5 局';
+  $('report-mode-note').hidden = !isJoy;
+  if (isJoy) {
+    const names = state.joy.talents.map(id => TALENTS.find(t => t.id === id).name);
+    $('report-mode-note').textContent = `本局天赋：${names.join('、') || '暂无'} · 换人 ${state.joy.swaps} 次 · 摇一摇 ${state.joy.shakes} 次。成绩仅计入欢乐模式本机榜。`;
+  }
   $('report-date').textContent = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
   $('report-stamp').hidden = !isRecord;
   $('report-verdict').textContent = state.fusions > 0 ? `张楷合体 ×${state.fusions}！` : wonThisGame ? '合出过大张楷！' : verdictFor(topLevel);
@@ -122,7 +131,7 @@ export function gameOver() {
   showRoundUnlocks(takeRoundUnlocks());
   onRoundOver();
 
-  shareText = `我在「合成大张楷」拿了 ${score} 分，最高合成到第 ${topLevel + 1} 级「${name}」，称号：${title}`
+  shareText = `我在「合成大张楷${isJoy ? ' · ' + modeName : ''}」拿了 ${score} 分，最高合成到第 ${topLevel + 1} 级「${name}」，称号：${title}`
     + (isRecord ? '，刷新了我的最高纪录' : '')
     + (state.fusions > 0 ? `，张楷合体 ${state.fusions} 次` : '')
     + (state.shinySeen > 0 ? `，还遇到了 ${state.shinySeen} 个黄金张楷` : '')

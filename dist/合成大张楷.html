@@ -320,6 +320,61 @@ label.linkish { cursor: pointer; }
 .achv-num { font-variant-numeric: tabular-nums; }
 .report-achv { margin: 0; font-size: .85rem !important; color: #8a5a00 !important; font-weight: 700; text-align: center; }
 .badge-count { margin-left: 6px; font-size: .72rem; font-weight: 400; color: var(--muted); }
+
+/* 模式入口：经典继续使用暖黄色，欢乐用紫色标识技能与天赋。 */
+.mode-bar { flex: none; width: 100%; max-width: 420px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: .75rem; color: var(--muted); }
+.mode-bar button { font-size: .72rem; padding: 2px 10px; border-width: 1px; }
+#mode-label { font-weight: 700; }
+.joy-mode #mode-label { color: #784ca6; }
+#mode-picker, #talent-picker { z-index: 8; }
+.mode-option { display: flex; align-items: center; gap: 14px; padding: 16px; border: 2px solid var(--line); border-radius: 14px; color: var(--ink); text-decoration: none; background: #fff2c9; }
+.mode-option > span:last-child { display: grid; gap: 6px; min-width: 0; }
+.mode-option b { font-family: var(--display); font-weight: 400; font-size: 1.3rem; }
+.mode-option small { font-size: .85rem; line-height: 1.5; }
+.mode-option em { font-size: .72rem; color: var(--muted); font-style: normal; line-height: 1.5; }
+.mode-option-icon { font-size: 2.1rem; flex: none; }
+.mode-option[aria-current] { outline: 2px solid var(--ink); outline-offset: 2px; }
+.mode-option:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.joy-option { background: #f0e5ff; border-color: #b493d1; }
+.joy-option .mode-option-icon, .joy-option b { color: #784ca6; }
+.joy-option i { font: normal .65rem var(--body); background: #784ca6; color: white; padding: 3px 6px; border-radius: 6px; vertical-align: middle; }
+.welcome-card .welcome-mode { padding: 6px 16px; font: .85rem var(--body); color: var(--muted); background: transparent; border-width: 1px; }
+.joy-panel { flex: none; box-sizing: border-box; width: 100%; max-width: 420px; margin-top: 7px; padding: 8px 10px; border: 1px solid #b493d1; border-radius: 12px; background: #fff8ec; }
+.energy-row { display: flex; align-items: center; gap: 8px; font-size: .72rem; color: #784ca6; }
+.energy-row b, #joy-energy { white-space: nowrap; }
+#joy-energy { font-variant-numeric: tabular-nums; }
+#joy-meter { flex: 1; min-width: 0; height: 8px; border: 0; border-radius: 9px; overflow: hidden; appearance: none; background: #e7dcf1; accent-color: #9364bf; }
+#joy-meter::-webkit-progress-bar { background: #e7dcf1; border-radius: 9px; }
+#joy-meter::-webkit-progress-value { background: linear-gradient(90deg, #9364bf, #c899e8); border-radius: 9px; }
+#joy-meter::-moz-progress-bar { background: #9364bf; border-radius: 9px; }
+.joy-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 7px; }
+.joy-skills button { display: grid; gap: 2px; border-radius: 9px; border-color: #784ca6; color: #653c90; background: #f0e5ff; padding: 6px; }
+.joy-skills b { font-family: var(--display); font-weight: 400; font-size: 1rem; }
+.joy-skills small { font-size: .65rem; font-weight: 400; }
+.joy-skills button:disabled { opacity: .48; cursor: default; }
+#joy-hint { margin: 6px 0 0; color: var(--muted); font-size: .69rem; line-height: 1.5; min-height: 1.5em; }
+.joy-talents { display: flex; flex-wrap: wrap; gap: 4px; }
+.joy-talents:empty { display: none; }
+.joy-talents span { margin-top: 5px; border-radius: 5px; padding: 2px 5px; font-size: .65rem; background: #eee0f9; color: #653c90; }
+.talent-kicker { color: #784ca6; font-size: .75rem; font-weight: 700; letter-spacing: .12em; }
+.talent-choices { display: grid; gap: 10px; }
+.talent-option { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 12px; border-color: #b493d1; background: #f7efff; text-align: left; white-space: normal; }
+.talent-option:hover { background: #eaddf8; border-color: #784ca6; }
+.talent-icon { flex: none; width: 34px; text-align: center; font-size: 2rem; color: #784ca6; }
+.talent-option b { display: block; margin-bottom: 5px; font-family: var(--display); font-size: 1.15rem; font-weight: 400; }
+.talent-option small { display: block; font-size: .8rem; color: var(--muted); line-height: 1.55; }
+.report .report-mode-note { font-size: .75rem; color: #784ca6; padding: 8px; background: #f0e5ff; border-radius: 8px; }
+@media (max-height: 650px) {
+  .joy-panel { padding: 6px 8px; margin-top: 4px; }
+  .joy-skills button { padding: 4px; }
+  .joy-mode .ladder { font-size: .62rem; gap: 2px 4px; padding-block: 4px 6px; }
+  .talent-option { padding: 10px; }
+}
+
+/* 欢乐模式的工具较多，桌面端也把操作按钮放到独立一行。 */
+.joy-mode .top { flex-wrap: wrap; row-gap: 6px; }
+.joy-mode .btns { order: 3; flex-basis: 100%; justify-content: center; flex-wrap: wrap; }
+.joy-mode .score { flex: none; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -340,8 +395,44 @@ label.linkish { cursor: pointer; }
   <span id="toast-text">已恢复上一局</span>
   <button id="btn-toast-restart" type="button">重新开始</button>
 </div>
+<div class="mode-bar">
+  <span id="mode-label">经典模式</span>
+  <button id="btn-mode" type="button">切换模式</button>
+</div>
 <div class="stage"><canvas id="game" aria-label="游戏画布"></canvas></div>
+<section class="joy-panel" id="joy-panel" aria-label="欢乐模式技能" hidden>
+  <div class="energy-row"><b>合成能量</b><progress id="joy-meter" max="100" value="30" aria-label="技能能量"></progress><span id="joy-energy">30 / 100</span></div>
+  <div class="joy-skills">
+    <button id="btn-swap" type="button"><b>↻ 换个人</b><small>35 能量 · 重抽手中角色</small></button>
+    <button id="btn-shake" type="button"><b>≈ 摇一摇</b><small>40 能量 · 松动场上堆叠</small></button>
+  </div>
+  <p id="joy-hint" role="status">每次合成 +8 能量 · 第 5 级选天赋</p>
+  <div id="joy-talents" class="joy-talents" aria-label="本局天赋"></div>
+</section>
 <div class="ladder" id="ladder"></div>
+
+<div class="overlay" id="mode-picker" hidden>
+  <div class="card mode-card" role="dialog" aria-modal="true" aria-labelledby="mode-title">
+    <h2 id="mode-title">今天怎么合？</h2>
+    <p id="mode-current">切换时自动保存本局</p>
+    <a class="mode-option" id="choose-classic" href="?">
+      <span class="mode-option-icon">◉</span><span><b>经典模式</b><small>熟悉的 14 级合成，挑战全班排行榜。</small><em>原版规则 · 原有存档</em></span>
+    </a>
+    <a class="mode-option joy-option" id="choose-joy" href="?mode=joy">
+      <span class="mode-option-icon">✦</span><span><b>欢乐模式 <i>新玩法</i></b><small>合成蓄能、主动技能，每局选择不同天赋。</small><em>第 5 / 9 / 12 级天赋三选一 · 独立本机成绩</em></span>
+    </a>
+    <p>两种模式的进度、最高分、成就和图鉴分别保存。</p>
+    <div class="actions"><button id="mode-close" type="button">返回游戏</button></div>
+  </div>
+</div>
+<div class="overlay" id="talent-picker" hidden>
+  <div class="card talent-card" role="dialog" aria-modal="true" aria-labelledby="talent-title" aria-describedby="talent-desc">
+    <span class="talent-kicker">欢乐模式 · 本局进化</span>
+    <h2 id="talent-title">选一个天赋</h2>
+    <p id="talent-desc">选择期间游戏暂停。天赋本局持续生效，重新开始后重选。</p>
+    <div id="talent-choices" class="talent-choices"></div>
+  </div>
+</div>
 
 <div class="overlay" id="win" hidden>
   <div class="card" style="align-items:center;text-align:center">
@@ -365,6 +456,7 @@ label.linkish { cursor: pointer; }
     <label class="sr-only" for="welcome-name">昵称</label>
     <input id="welcome-name" type="text" maxlength="12" placeholder="你的昵称（最多 12 个字）" autocomplete="nickname">
     <button id="btn-welcome" type="button">开始玩</button>
+    <button id="welcome-mode" class="welcome-mode" type="button">切换模式 · 试试欢乐玩法</button>
     <p class="welcome-msg" id="welcome-msg" role="status"></p>
   </div>
 </div>
@@ -441,7 +533,7 @@ label.linkish { cursor: pointer; }
 
 <div class="overlay" id="over" hidden>
   <div class="card report">
-    <div class="report-head"><b>合成大张楷 · 战报</b><span id="report-date">10月2日</span></div>
+    <div class="report-head"><b id="report-heading">合成大张楷 · 战报</b><span id="report-date">10月2日</span></div>
     <span class="stamp" id="report-stamp" hidden>新纪录</span>
     <div class="report-body">
       <p class="verdict" id="report-verdict">张楷溢出来了</p>
@@ -459,13 +551,14 @@ label.linkish { cursor: pointer; }
         <div><b id="stat-combo">0</b><span>最大连击</span></div>
         <div><b id="stat-time">0:00</b><span>用时</span></div>
       </div>
+      <p id="report-mode-note" class="report-mode-note" hidden></p>
       <p class="report-achv" id="report-achv" hidden></p>
       <div class="dex" id="dex">
         <p class="dex-line" id="dex-line"></p>
         <div class="dex-dots" id="dex-dots"></div>
       </div>
       <div class="board">
-      <h3>本机最好 5 局</h3>
+      <h3 id="board-heading">本机最好 5 局</h3>
       <ol id="board"></ol>
     </div>
       <div class="upload" id="upload" hidden>
@@ -722,13 +815,29 @@ function loadImage(src) {
   });
 }
 
+// ---- mode.js ----
+// 模式在页面加载时确定，切换时重新加载，避免局内状态互相串用。
+
+function modeFromSearch(search = '') {
+  return new URLSearchParams(search).get('mode') === 'joy' ? 'joy' : 'classic';
+}
+const ACTIVE_MODE = modeFromSearch(globalThis.location?.search);
+const isJoy = ACTIVE_MODE === 'joy';
+const modeName = isJoy ? '欢乐模式' : '经典模式';
+const MODE_KEYS = new Set(['best', 'board', 'save', 'dex', 'achievements', 'gamesPlayed'].map(k => STORAGE_KEYS[k]));
+
+function modeStorageKey(key, mode = ACTIVE_MODE) {
+  return mode === 'joy' && MODE_KEYS.has(key) ? key + '-joy-v1' : key;
+}
+
 // ---- skin.js ----
 // 皮肤：每一级的名字、照片和碰撞轮廓。照片统一用 config.js 里的内置照片，玩家不能自己换。
 
 
+
 const store = {
-  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } }
+  get(k) { try { return localStorage.getItem(modeStorageKey(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(modeStorageKey(k), v); return true; } catch { return false; } }
 };
 
 const blankSkin = () => LEVELS.map(l => ({ name: l.name, photo: null }));
@@ -1121,12 +1230,86 @@ const sfx = {
   over: () => [392, 330, 262].forEach((f, i) => tone(f, i * 0.18, 0.3, 0.14, 'sawtooth'))
 };
 
+// ---- joy.js ----
+// 欢乐模式的纯规则；经典模式不使用这些加成。
+
+const JOY_RULES = { energyMax: 100, startingEnergy: 30, mergeEnergy: 8, swapCost: 35, shakeCost: 40, skillCooldownMs: 1200 };
+const JOY_MILESTONES = [4, 8, 11]; // 展示等级 5、9、12，从 0 开始计数
+const TALENTS = [
+  { id: 'gold', icon: '✦', name: '黄金时代', desc: '新生黄金概率从 1% 提升到 4%，遗传概率不变。' },
+  { id: 'chain', icon: '∞', name: '连锁反应', desc: '连击窗口从 1.2 秒延长到 2.4 秒。' },
+  { id: 'aim', icon: '◎', name: '精准投放', desc: '显示落点参考圈，帮你瞄准堆叠位置。' },
+  { id: 'rescue', icon: '♥', name: '绝处逢生', desc: '首次判负前清除越线区最小的一个张楷，本局限一次。' },
+  { id: 'charge', icon: 'ϟ', name: '蓄势待发', desc: '每次合成获得 12 点能量，立即补充 20 点能量。' }
+];
+
+function createJoyRun() {
+  return { energy: JOY_RULES.startingEnergy, talents: [], offer: null, rescueUsed: false, swaps: 0, shakes: 0 };
+}
+const hasTalent = (run, id) => Boolean(run?.talents.includes(id));
+const joyComboWindow = run => RULES.comboWindowMs * (hasTalent(run, 'chain') ? 2 : 1);
+const joyShinyChance = run => hasTalent(run, 'gold') ? 0.04 : SHINY.chance;
+
+function gainJoyEnergy(run, amount = hasTalent(run, 'charge') ? 12 : JOY_RULES.mergeEnergy) {
+  run.energy = Math.min(JOY_RULES.energyMax, run.energy + amount);
+}
+function spendJoyEnergy(run, skill) {
+  const cost = skill === 'swap' ? JOY_RULES.swapCost : skill === 'shake' ? JOY_RULES.shakeCost : Infinity;
+  if (run.energy < cost) return false;
+  run.energy -= cost;
+  if (skill === 'swap') run.swaps += 1;
+  else run.shakes += 1;
+  return true;
+}
+
+// 候选一旦出现就保存，刷新不会重抽；一次只处理一个里程碑。
+function offerJoyTalents(run, topLevel, random = Math.random) {
+  if (run.offer) return run.offer;
+  const milestone = JOY_MILESTONES[run.talents.length];
+  if (milestone === undefined || topLevel < milestone) return null;
+  const pool = TALENTS.filter(t => !hasTalent(run, t.id)).map(t => t.id);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  run.offer = { milestone, options: pool.slice(0, 3) };
+  return run.offer;
+}
+function chooseJoyTalent(run, id) {
+  if (!run.offer?.options.includes(id) || hasTalent(run, id)) return false;
+  run.talents.push(id);
+  run.offer = null;
+  if (id === 'charge') gainJoyEnergy(run, 20);
+  return true;
+}
+
+function restoreJoyRun(saved) {
+  const run = createJoyRun();
+  if (!saved || typeof saved !== 'object') return run;
+  const ids = new Set(TALENTS.map(t => t.id));
+  run.talents = Array.isArray(saved.talents) ? [...new Set(saved.talents.filter(id => ids.has(id)))].slice(0, 3) : [];
+  run.energy = Number.isFinite(saved.energy) ? Math.max(0, Math.min(JOY_RULES.energyMax, saved.energy)) : run.energy;
+  run.rescueUsed = saved.rescueUsed === true;
+  for (const key of ['swaps', 'shakes']) run[key] = Number.isInteger(saved[key]) && saved[key] >= 0 ? saved[key] : 0;
+  const offer = saved.offer;
+  if (offer && run.talents.length < 3 && offer.milestone === JOY_MILESTONES[run.talents.length]
+      && Array.isArray(offer.options) && offer.options.length === 3 && new Set(offer.options).size === 3
+      && offer.options.every(id => ids.has(id) && !run.talents.includes(id))) {
+    run.offer = { milestone: offer.milestone, options: [...offer.options] };
+  }
+  return run;
+}
+
 // ---- state.js ----
 // 一局游戏的全部状态。物理引擎每帧都在变，这里用一个可变对象集中管理，各模块只读写这一处。
 
 
+
+
 const state = {
   engine: null,
+  joy: isJoy ? createJoyRun() : null,
+  joySkillReadyAt: 0,
   score: 0,
   best: Number(store.get(STORAGE_KEYS.best)) || 0,
   topLevel: 0,
@@ -1154,7 +1337,7 @@ const state = {
 
 function resetRound(engine, firstNext) {
   Object.assign(state, {
-    engine,
+    engine, joy: isJoy ? createJoyRun() : null, joySkillReadyAt: 0,
     score: 0, topLevel: 0, current: 0, next: firstNext, currentShiny: false, nextShiny: false, shinySeen: 0, fusions: 0, dangerShift: 0,
     aimX: FIELD.width / 2, canDrop: true, over: false, paused: false, wonThisGame: false,
     dangerSince: 0, mergeCount: 0, maxCombo: 0, startedAt: Date.now(), combo: 0, lastMergeAt: 0
@@ -1178,10 +1361,11 @@ const $ = id => document.getElementById(id);
 // 每台设备一个随机身份码：昵称第一次被谁占用就归谁，成绩也只能用自己的身份码提交。
 
 
+
 const TIMEOUT_MS = 12000;
 const NETWORK_RETRIES = 1;
 
-const leaderboardEnabled = () => Boolean(LEADERBOARD.url && LEADERBOARD.key);
+const leaderboardEnabled = () => !isJoy && Boolean(LEADERBOARD.url && LEADERBOARD.key);
 
 // 本机身份码：32 字节随机数，第一次用时生成
 // 存不进 localStorage 时（隐私模式、配额满）至少本次打开期间保持同一个身份
@@ -1207,6 +1391,7 @@ function networkError(message) {
 
 // 网络不通或超时自动重试；服务器明确拒绝（4xx/5xx）不重试
 async function rpc(fn, args, retries = NETWORK_RETRIES) {
+  if (isJoy) return null;
   try {
     return await rpcOnce(fn, args);
   } catch (err) {
@@ -1555,6 +1740,7 @@ function avatarEl(name, avatar, size = 32) {
 
 
 
+
 const myAvatar = () => store.get(STORAGE_KEYS.avatar) || '';
 
 // 上传头像；服务器还不认识本机时先用本机昵称占一下再传
@@ -1568,6 +1754,7 @@ async function uploadAvatar(dataUrl) {
 
 // 打开游戏时对一下本机和服务器的头像：服务器有、本机没有就拿回来；本机有、服务器没有（之前断网没传上）就补传
 async function syncMyAvatar() {
+  if (isJoy) return;
   if (!store.get(STORAGE_KEYS.playerName)) return;
   try {
     const p = await myProfile();
@@ -1610,6 +1797,7 @@ function renderMeBar(el, { size = 28, onChanged } = {}) {
 // 成就数同步到服务器：解锁后等一会儿再传（连着解锁几个只传一次），连不上就下次再说
 let badgeTimer = 0;
 function syncBadges(count) {
+  if (isJoy) return;
   if (!count || !store.get(STORAGE_KEYS.playerName)) return;
   clearTimeout(badgeTimer);
   badgeTimer = setTimeout(() => { setBadges(count).catch(() => { /* 下次再传 */ }); }, 1500);
@@ -1905,6 +2093,8 @@ function bindRankboard() {
 // 只存在本机；游戏结束或主动重开时清空。
 
 
+
+
 const SAVE_VERSION = 1;
 const MAX_BODIES = 400;
 
@@ -1913,7 +2103,7 @@ const isLevel = v => Number.isInteger(v) && v >= 0 && v <= MAX;
 
 // snapshot：{ bodies: [{lv, x, y, angle}], state: {...} }，由 game.js 生成
 function writeSave(snapshot) {
-  store.set(STORAGE_KEYS.save, JSON.stringify({ v: SAVE_VERSION, at: Date.now(), ...snapshot }));
+  store.set(STORAGE_KEYS.save, JSON.stringify({ v: SAVE_VERSION, at: Date.now(), ...snapshot, mode: ACTIVE_MODE }));
 }
 
 function clearSave() {
@@ -1925,6 +2115,7 @@ function readSave() {
   try {
     const s = JSON.parse(store.get(STORAGE_KEYS.save) || 'null');
     if (!s || s.v !== SAVE_VERSION || !Array.isArray(s.bodies) || !s.state) return null;
+    if ((s.mode || 'classic') !== ACTIVE_MODE) return null;
     const bodies = s.bodies.filter(b =>
       b && isLevel(b.lv) && isNum(b.x) && isNum(b.y) && isNum(b.angle)
       && b.x >= 0 && b.x <= FIELD.width && b.y <= FIELD.height)
@@ -1934,11 +2125,13 @@ function readSave() {
     const fields = ['score', 'topLevel', 'current', 'next', 'mergeCount', 'maxCombo', 'playedMs'];
     if (!fields.every(k => isNum(st[k]) && st[k] >= 0)) return null;
     if (![st.topLevel, st.current, st.next].every(isLevel)) return null;
-    if (bodies.length === 0 && st.score === 0) return null;  // 刚开局什么都没有，不值得恢复
+    if (!isJoy && bodies.length === 0 && st.score === 0) return null;  // 刚开局什么都没有，不值得恢复
     return {
       bodies,
       state: {
         ...st,
+        joy: isJoy ? restoreJoyRun(st.joy) : null,
+        joySkillReadyAt: 0,
         wonThisGame: Boolean(st.wonThisGame),
         currentShiny: st.currentShiny === true,
         nextShiny: st.nextShiny === true,
@@ -2055,6 +2248,8 @@ function bindAchievements({ onCountChanged } = {}) {
 
 
 
+
+
 const BOARD_SIZE = 5;
 
 function showWin() {
@@ -2146,6 +2341,13 @@ function gameOver() {
   const name = skin[topLevel].name;
   const secs = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
 
+  $('report-heading').textContent = isJoy ? '欢乐模式 · 战报' : '合成大张楷 · 战报';
+  $('board-heading').textContent = isJoy ? '欢乐模式 · 本机最好 5 局' : '本机最好 5 局';
+  $('report-mode-note').hidden = !isJoy;
+  if (isJoy) {
+    const names = state.joy.talents.map(id => TALENTS.find(t => t.id === id).name);
+    $('report-mode-note').textContent = `本局天赋：${names.join('、') || '暂无'} · 换人 ${state.joy.swaps} 次 · 摇一摇 ${state.joy.shakes} 次。成绩仅计入欢乐模式本机榜。`;
+  }
   $('report-date').textContent = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
   $('report-stamp').hidden = !isRecord;
   $('report-verdict').textContent = state.fusions > 0 ? `张楷合体 ×${state.fusions}！` : wonThisGame ? '合出过大张楷！' : verdictFor(topLevel);
@@ -2166,7 +2368,7 @@ function gameOver() {
   showRoundUnlocks(takeRoundUnlocks());
   onRoundOver();
 
-  shareText = `我在「合成大张楷」拿了 ${score} 分，最高合成到第 ${topLevel + 1} 级「${name}」，称号：${title}`
+  shareText = `我在「合成大张楷${isJoy ? ' · ' + modeName : ''}」拿了 ${score} 分，最高合成到第 ${topLevel + 1} 级「${name}」，称号：${title}`
     + (isRecord ? '，刷新了我的最高纪录' : '')
     + (state.fusions > 0 ? `，张楷合体 ${state.fusions} 次` : '')
     + (state.shinySeen > 0 ? `，还遇到了 ${state.shinySeen} 个黄金张楷` : '')
@@ -2215,9 +2417,9 @@ function pickLevel(weights, rand = Math.random) {
 // 闪光张楷：随机出现、合成遗传、得分倍率。纯函数，可单独测试。
 
 // 新出现的张楷（投放或合成产物）是不是闪光；parentShiny 表示参与合成的两个里有没有闪光
-function rollShiny(parentShiny = false, rand = Math.random) {
+function rollShiny(parentShiny = false, rand = Math.random, chance = SHINY.chance) {
   if (parentShiny && rand() < SHINY.inherit) return true;
-  return rand() < SHINY.chance;
+  return rand() < chance;
 }
 
 // 有闪光参与的那次合成得分倍率
@@ -2394,8 +2596,120 @@ function drawEffects(ctx, now) {
   ctx.fillStyle = COLORS.ink;
 }
 
+// ---- joy-ui.js ----
+// 欢乐模式面板与天赋弹窗；通过回调调用游戏，保持模块依赖无环。
+
+
+
+
+let joySave = () => {};
+let joyResize = () => {};
+let joyChoiceStartedAt = 0;
+let joyFeedbackUntil = 0;
+let joyChoicesSignature = '';
+let joyTalentsSignature = '';
+
+function joyFeedback(message) {
+  if (!isJoy) return;
+  $('joy-hint').textContent = message;
+  joyFeedbackUntil = performance.now() + 3200;
+}
+
+function resetJoyUI() {
+  $('talent-picker').hidden = true;
+  joyChoiceStartedAt = 0;
+  joyChoicesSignature = '';
+  joyTalentsSignature = '';
+  joyFeedbackUntil = 0;
+}
+
+function showJoyChoices(offer) {
+  if (!$('talent-picker').hidden) return;
+  if (document.querySelector('.overlay:not([hidden])')) return;
+  state.paused = true;
+  state.dangerSince = 0;
+  joyChoiceStartedAt = performance.now();
+  $('talent-picker').hidden = false;
+  $('talent-title').textContent = `合到第 ${offer.milestone + 1} 级 · 选一个天赋`;
+  const signature = offer.options.join(',');
+  if (signature !== joyChoicesSignature) {
+    joyChoicesSignature = signature;
+    $('talent-choices').replaceChildren(...offer.options.map(id => {
+      const talent = TALENTS.find(t => t.id === id);
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'talent-option'; button.dataset.talent = id;
+      const icon = document.createElement('span'); icon.className = 'talent-icon'; icon.textContent = talent.icon;
+      const text = document.createElement('span');
+      const name = document.createElement('b'); name.textContent = talent.name;
+      const desc = document.createElement('small'); desc.textContent = talent.desc;
+      text.append(name, desc); button.append(icon, text);
+      button.addEventListener('click', () => {
+        if (!chooseJoyTalent(state.joy, id)) return;
+        const pausedFor = performance.now() - joyChoiceStartedAt;
+        state.startedAt += pausedFor;
+        if (state.lastMergeAt) state.lastMergeAt += pausedFor;
+        $('talent-picker').hidden = true;
+        state.paused = false;
+        state.dangerSince = 0;
+        joyFeedback(`已获得「${talent.name}」`);
+        syncJoyUI();
+        joySave();
+        if ($('talent-picker').hidden) $('btn-swap').focus();
+      });
+      return button;
+    }));
+  }
+  $('talent-choices').querySelector('button')?.focus();
+  joySave();
+}
+
+function syncJoyUI() {
+  if (!isJoy || !state.joy) return;
+  const run = state.joy;
+  $('joy-energy').textContent = `${run.energy} / ${JOY_RULES.energyMax}`;
+  $('joy-meter').value = run.energy;
+  const blocked = state.over || state.paused || !state.canDrop || performance.now() < (state.joySkillReadyAt || 0)
+    || Boolean(document.querySelector('.overlay:not([hidden])'));
+  $('btn-swap').disabled = blocked || run.energy < JOY_RULES.swapCost;
+  $('btn-shake').disabled = blocked || run.energy < JOY_RULES.shakeCost;
+  const signature = run.talents.join(',') + run.rescueUsed;
+  if (signature !== joyTalentsSignature) {
+    joyTalentsSignature = signature;
+    $('joy-talents').replaceChildren(...run.talents.map(id => {
+      const talent = TALENTS.find(t => t.id === id);
+      const tag = document.createElement('span');
+      tag.textContent = talent.icon + ' ' + talent.name + (id === 'rescue' && run.rescueUsed ? ' · 已用' : '');
+      tag.title = talent.desc;
+      return tag;
+    }));
+    joyResize();
+  }
+  if (performance.now() > joyFeedbackUntil) {
+    const next = JOY_MILESTONES[run.talents.length];
+    $('joy-hint').textContent = next === undefined ? '天赋已集齐，试试技能与连击的配合！'
+      : `每次合成 +${run.talents.includes('charge') ? 12 : 8} 能量 · 第 ${next + 1} 级选天赋`;
+  }
+  if (!state.over) {
+    const offer = offerJoyTalents(run, state.topLevel);
+    if (offer) showJoyChoices(offer);
+  }
+}
+
+function bindJoyUI({ useSkill, save, resize }) {
+  joySave = save;
+  joyResize = resize;
+  $('joy-panel').hidden = !isJoy;
+  $('mode-label').textContent = modeName;
+  document.body.classList.toggle('joy-mode', isJoy);
+  $('btn-swap').addEventListener('click', () => useSkill('swap'));
+  $('btn-shake').addEventListener('click', () => useSkill('shake'));
+}
+
 // ---- game.js ----
 // 游戏本体：物理世界、投放、合成、判负、主循环、画面适配和输入。
+
+
+
 
 
 
@@ -2420,6 +2734,8 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const isKai = b => b.kaiLevel !== undefined;
 const kaiBodies = () => Composite.allBodies(state.engine.world).filter(isKai);
+const modeRollShiny = (parent = false) => isJoy
+  ? rollShiny(parent, Math.random, joyShinyChance(state.joy)) : rollShiny(parent);
 
 // ---------- 物理世界 ----------
 function newEngine() {
@@ -2497,6 +2813,7 @@ function fuseMax(a, b) {
   Composite.remove(state.engine.world, [a, b]);
   state.fusions += 1;
   state.mergeCount += 1;
+  if (isJoy) gainJoyEnergy(state.joy);
   state.dangerShift = Math.min(RULES.fuseDangerMax, state.dangerShift + RULES.fuseDangerStep);
   addScore(RULES.fuseBonus);
   if (silent) return;
@@ -2508,19 +2825,21 @@ function fuseMax(a, b) {
 }
 
 function mergePair(a, b) {
+  if (isJoy && state.paused) return;
   if (a.kaiLevel === MAX) { fuseMax(a, b); return; }
   const lv = a.kaiLevel + 1, now = clock();
   a.merged = b.merged = true;
   const x = (a.position.x + b.position.x) / 2, y = (a.position.y + b.position.y) / 2;
   Composite.remove(state.engine.world, [a, b]);
   const parentShiny = Boolean(a.kaiShiny || b.kaiShiny);
-  const nb = makeKai(x, y, lv, rollShiny(parentShiny));
+  const nb = makeKai(x, y, lv, modeRollShiny(parentShiny));
   nb.popAt = now;
   Body.setVelocity(nb, { x: 0, y: -1.5 });
 
-  state.combo = now - state.lastMergeAt < RULES.comboWindowMs ? state.combo + 1 : 1;
+  state.combo = now - state.lastMergeAt < (isJoy ? joyComboWindow(state.joy) : RULES.comboWindowMs) ? state.combo + 1 : 1;
   state.lastMergeAt = now;
   state.mergeCount += 1;
+  if (isJoy) gainJoyEnergy(state.joy);
   state.maxCombo = Math.max(state.maxCombo, state.combo);
   state.topLevel = Math.max(state.topLevel, lv);
   const base = lv * 2 + (state.combo >= 2 ? (state.combo - 1) * lv : 0);
@@ -2565,7 +2884,7 @@ function drop() {
   state.current = state.next;
   state.currentShiny = state.nextShiny;
   state.next = randLevel();
-  state.nextShiny = rollShiny();
+  state.nextShiny = modeRollShiny();
   state.canDrop = false;
   clearTimeout(cooldownTimer);
   cooldownTimer = setTimeout(() => { state.canDrop = true; }, RULES.dropCooldownMs);
@@ -2576,7 +2895,48 @@ function checkDanger(now) {
     now - b.bornAt > RULES.dangerGraceMs && b.bounds.min.y < dangerY() && Math.abs(b.velocity.y) < 1.2);
   if (!risky) { state.dangerSince = 0; return; }
   if (!state.dangerSince) state.dangerSince = now;
-  if (now - state.dangerSince > RULES.dangerHoldMs) gameOver();
+  if (now - state.dangerSince > RULES.dangerHoldMs) {
+    if (isJoy && hasTalent(state.joy, 'rescue') && !state.joy.rescueUsed) {
+      const candidate = kaiBodies().filter(b => !b.merged && b.bounds.min.y < dangerY())
+        .sort((a, b) => a.kaiLevel - b.kaiLevel)[0];
+      if (candidate) {
+        Composite.remove(state.engine.world, candidate);
+        state.joy.rescueUsed = true;
+        state.dangerSince = 0;
+        joyFeedback('绝处逢生！已清除一个越线张楷');
+        saveNow();
+        return;
+      }
+    }
+    gameOver();
+  }
+}
+
+// 技能只在欢乐模式的正常游戏过程中生效。
+function useJoySkill(skill) {
+  if (!isJoy || !state.engine || state.over || state.paused || !state.canDrop
+      || performance.now() < state.joySkillReadyAt || document.querySelector('.overlay:not([hidden])')) return false;
+  const bodies = kaiBodies().filter(b => !b.merged);
+  if (skill === 'shake' && !bodies.length) { joyFeedback('先投放一个张楷，再摇一摇'); return false; }
+  if (!spendJoyEnergy(state.joy, skill)) return false;
+  if (skill === 'swap') {
+    // 排除手里的等级，保证“换人”真的换；黄金状态保留，不靠换人刷黄金。
+    const weights = spawnWeights(state.topLevel, levelCounts()).map((w, lv) => lv === state.current ? 0 : w);
+    state.current = pickLevel(weights);
+    state.aimX = clampAim(state.current);
+    joyFeedback('换人成功！下一位保持不变');
+  } else {
+    bodies.forEach((b, i) => {
+      const dx = W / 2 - b.position.x;
+      Body.setVelocity(b, { x: Math.max(-3, Math.min(3, b.velocity.x + Math.sign(dx || (i % 2 ? 1 : -1)) * 2.4)), y: -2.2 });
+      Body.setAngularVelocity(b, (i % 2 ? 1 : -1) * 0.04);
+    });
+    joyFeedback('摇一摇！让同级张楷靠近一点');
+  }
+  state.joySkillReadyAt = performance.now() + JOY_RULES.skillCooldownMs;
+  syncJoyUI();
+  saveNow();
+  return true;
 }
 
 // ---------- 快速模拟（只在 ?debug 时挂到 window 上，用来调掉落表）----------
@@ -2625,6 +2985,7 @@ function simulateGames({ games = 10, table, thinkMs = 1000, aimRate = 0.7, maxDr
 // 测试用：当前所有张楷的位置与等级（只在 ?debug 时挂到 window 上）
 function debugSnapshot() {
   return {
+    mode: isJoy ? 'joy' : 'classic', joy: state.joy, current: state.current, next: state.next,
     over: state.over, paused: state.paused, score: state.score, topLevel: state.topLevel, shinySeen: state.shinySeen,
     bodies: kaiBodies().map(b => ({
       lv: b.kaiLevel, shiny: Boolean(b.kaiShiny), x: b.position.x, y: b.position.y,
@@ -2635,6 +2996,7 @@ function debugSnapshot() {
 
 // ---------- 界面 ----------
 function updateHud() {
+  syncJoyUI();
   document.getElementById('score').textContent = state.score;
   document.getElementById('best').textContent = state.best;
   document.getElementById('ladder').replaceChildren(...skin.map((s, i) => {
@@ -2649,6 +3011,7 @@ function enterRound(engine) {
   clearTimeout(cooldownTimer);
   resetRound(engine, 0);
   resetEffects();
+  resetJoyUI();
   document.getElementById('win').hidden = true;
   document.getElementById('over').hidden = true;
 }
@@ -2656,8 +3019,8 @@ function enterRound(engine) {
 function startGame() {
   enterRound(newEngine());
   state.next = randLevel();
-  state.currentShiny = rollShiny();
-  state.nextShiny = rollShiny();
+  state.currentShiny = modeRollShiny();
+  state.nextShiny = modeRollShiny();
   resetRoundStats();
   clearSave();
   updateHud();
@@ -2674,6 +3037,7 @@ function snapshotGame() {
       angle: Math.round(b.angle * 1000) / 1000, shiny: Boolean(b.kaiShiny)
     })),
     state: {
+      joy: isJoy ? state.joy : null,
       score: state.score, topLevel: state.topLevel, current: state.current, next: state.next,
       mergeCount: state.mergeCount, maxCombo: state.maxCombo, wonThisGame: state.wonThisGame,
       currentShiny: state.currentShiny, nextShiny: state.nextShiny, shinySeen: state.shinySeen,
@@ -2719,6 +3083,16 @@ function draw(now) {
     const x = clampAim(state.current);
     ctx.strokeStyle = 'rgba(59,42,20,.18)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(x, FIELD.dropY); ctx.lineTo(x, H); ctx.stroke();
+    if (isJoy && hasTalent(state.joy, 'aim')) {
+      const r = LEVELS[state.current].r;
+      const top = kaiBodies().filter(b => !b.merged && x + r > b.bounds.min.x && x - r < b.bounds.max.x)
+        .reduce((min, b) => Math.min(min, b.bounds.min.y), H);
+      const y = Math.max(FIELD.dropY, top - r);
+      ctx.save();
+      ctx.strokeStyle = '#784ca6'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
     if (state.canDrop) drawKai(ctx, x, FIELD.dropY, LEVELS[state.current].r, state.current, 0, state.currentShiny);
   }
   ctx.font = '13px sans-serif'; ctx.fillStyle = COLORS.muted;
@@ -2751,6 +3125,7 @@ function loop(now) {
     state.dangerSince = 0;  // 暂停期间不计越线时间，恢复后重新数 2 秒
   }
   if (!state.over && now - lastSaveAt > AUTOSAVE_MS) saveNow();
+  syncJoyUI();
   draw(now);
   requestAnimationFrame(loop);
 }
@@ -3170,8 +3545,60 @@ function bindGroup() {
   });
 }
 
+// ---- mode-ui.js ----
+function bindModePicker({ save }) {
+  let modeWasPaused = false;
+  let modeFocus = null;
+  let modeOpenedAt = 0;
+  const open = () => {
+    modeWasPaused = state.paused;
+    modeFocus = document.activeElement;
+    modeOpenedAt = performance.now();
+    state.paused = true;
+    $('mode-picker').hidden = false;
+    $('mode-close').focus();
+  };
+  const close = () => {
+    $('mode-picker').hidden = true;
+    state.paused = modeWasPaused;
+    if (!modeWasPaused) state.startedAt += performance.now() - modeOpenedAt;
+    state.dangerSince = 0;
+    modeFocus?.focus();
+  };
+  $('btn-mode').addEventListener('click', open);
+  $('welcome-mode').addEventListener('click', open);
+  $('mode-close').addEventListener('click', close);
+  $('mode-current').textContent = `当前：${modeName} · 切换时自动保存本局`;
+  for (const mode of ['classic', 'joy']) {
+    const link = $('choose-' + mode);
+    const url = new URL(location.href);
+    url.search = mode === 'joy' ? '?mode=joy' : '';
+    url.hash = '';
+    link.href = url.href;
+    const selected = (mode === 'joy') === isJoy;
+    if (selected) link.setAttribute('aria-current', 'true');
+    link.addEventListener('click', e => {
+      if (selected) { e.preventDefault(); close(); }
+      else save();
+    });
+  }
+  document.addEventListener('keydown', e => {
+    const dialog = !$('mode-picker').hidden ? $('mode-picker') : !$('talent-picker').hidden ? $('talent-picker') : null;
+    if (!dialog) return;
+    if (e.key === 'Escape' && dialog.id === 'mode-picker') { e.preventDefault(); close(); }
+    if (e.key !== 'Tab') return;
+    const items = [...dialog.querySelectorAll('button:not(:disabled), a[href]')];
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+}
+
 // ---- main.js ----
 // 启动：加载照片 → 开局 → 绑定按钮。链接带 ?test=win / ?test=over（可加 &score=分数）时直接展示庆祝画面 / 示例战报。
+
+
+
 
 
 
@@ -3219,6 +3646,8 @@ function bindButtons() {
   bindGroup();
   bindAchievements({ onCountChanged: syncBadges });
   renderSoundBtn();
+  bindJoyUI({ useSkill: useJoySkill, save: saveNow, resize: fit });
+  bindModePicker({ save: saveNow });
 }
 
 function runTestHooks() {
@@ -3246,6 +3675,7 @@ async function boot() {
   fit();
   bindInput();
   bindButtons();
+  fit();
   await Promise.all([initSkin(), initCrown()]);
   // 有上一局的存档就接着玩（测试链接不恢复，免得干扰）
   const saved = /[?&]test=/.test(location.search) ? null : readSave();
@@ -3255,7 +3685,7 @@ async function boot() {
   } else {
     startGame();
   }
-  if (!/[?&]test=/.test(location.search)) {
+  if (!isJoy && !/[?&]test=/.test(location.search)) {
     const isNewPlayer = needsWelcome();
     showWelcomeIfNeeded();
     showNoticeIfNew({ isNewPlayer });

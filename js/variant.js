@@ -2,9 +2,9 @@
 import { SHINY } from './config.js';
 
 // 新出现的张楷（投放或合成产物）是不是闪光；parentShiny 表示参与合成的两个里有没有闪光
-export function rollShiny(parentShiny = false, rand = Math.random) {
+export function rollShiny(parentShiny = false, rand = Math.random, chance = SHINY.chance) {
   if (parentShiny && rand() < SHINY.inherit) return true;
-  return rand() < SHINY.chance;
+  return rand() < chance;
 }
 
 // 有闪光参与的那次合成得分倍率

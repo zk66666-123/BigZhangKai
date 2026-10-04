@@ -10,6 +10,8 @@ import { loadDex } from './dex.js';
 import { onRoundEnd, takeRoundUnlocks } from './achievements.js';
 import { showRoundUnlocks } from './achieve-ui.js';
 import { $ } from './dom.js';
+import { isJoy, modeName } from './mode.js';
+import { TALENTS } from './joy.js';
 
 const BOARD_SIZE = 5;
 
@@ -102,6 +104,13 @@ export function gameOver() {
   const name = skin[topLevel].name;
   const secs = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
 
+  $('report-heading').textContent = isJoy ? '欢乐模式 · 战报' : '合成大张楷 · 战报';
+  $('board-heading').textContent = isJoy ? '欢乐模式 · 本机最好 5 局' : '本机最好 5 局';
+  $('report-mode-note').hidden = !isJoy;
+  if (isJoy) {
+    const names = state.joy.talents.map(id => TALENTS.find(t => t.id === id).name);
+    $('report-mode-note').textContent = `本局天赋：${names.join('、') || '暂无'} · 换人 ${state.joy.swaps} 次 · 摇一摇 ${state.joy.shakes} 次。成绩仅计入欢乐模式本机榜。`;
+  }
   $('report-date').textContent = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
   $('report-stamp').hidden = !isRecord;
   $('report-verdict').textContent = state.fusions > 0 ? `张楷合体 ×${state.fusions}！` : wonThisGame ? '合出过大张楷！' : verdictFor(topLevel);
@@ -122,7 +131,7 @@ export function gameOver() {
   showRoundUnlocks(takeRoundUnlocks());
   onRoundOver();
 
-  shareText = `我在「合成大张楷」拿了 ${score} 分，最高合成到第 ${topLevel + 1} 级「${name}」，称号：${title}`
+  shareText = `我在「合成大张楷${isJoy ? ' · ' + modeName : ''}」拿了 ${score} 分，最高合成到第 ${topLevel + 1} 级「${name}」，称号：${title}`
     + (isRecord ? '，刷新了我的最高纪录' : '')
     + (state.fusions > 0 ? `，张楷合体 ${state.fusions} 次` : '')
     + (state.shinySeen > 0 ? `，还遇到了 ${state.shinySeen} 个黄金张楷` : '')

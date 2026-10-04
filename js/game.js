@@ -12,6 +12,9 @@ import { state, resetRound, addScore } from './state.js';
 import { resetEffects, mergeEffects, shinyEffects, fuseEffects, floatScore, applyShake, drawEffects } from './effects.js';
 import { showWin, gameOver } from './report.js';
 import { writeSave, clearSave } from './save.js';
+import { isJoy } from './mode.js';
+import { JOY_RULES, hasTalent, gainJoyEnergy, spendJoyEnergy, joyComboWindow, joyShinyChance } from './joy.js';
+import { syncJoyUI, resetJoyUI, joyFeedback } from './joy-ui.js';
 
 const { Engine, Bodies, Composite, Events, Body } = Matter;
 const W = FIELD.width, H = FIELD.height;
@@ -24,6 +27,8 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const isKai = b => b.kaiLevel !== undefined;
 const kaiBodies = () => Composite.allBodies(state.engine.world).filter(isKai);
+const modeRollShiny = (parent = false) => isJoy
+  ? rollShiny(parent, Math.random, joyShinyChance(state.joy)) : rollShiny(parent);
 
 // ---------- 物理世界 ----------
 function newEngine() {
@@ -101,6 +106,7 @@ function fuseMax(a, b) {
   Composite.remove(state.engine.world, [a, b]);
   state.fusions += 1;
   state.mergeCount += 1;
+  if (isJoy) gainJoyEnergy(state.joy);
   state.dangerShift = Math.min(RULES.fuseDangerMax, state.dangerShift + RULES.fuseDangerStep);
   addScore(RULES.fuseBonus);
   if (silent) return;
@@ -112,19 +118,21 @@ function fuseMax(a, b) {
 }
 
 function mergePair(a, b) {
+  if (isJoy && state.paused) return;
   if (a.kaiLevel === MAX) { fuseMax(a, b); return; }
   const lv = a.kaiLevel + 1, now = clock();
   a.merged = b.merged = true;
   const x = (a.position.x + b.position.x) / 2, y = (a.position.y + b.position.y) / 2;
   Composite.remove(state.engine.world, [a, b]);
   const parentShiny = Boolean(a.kaiShiny || b.kaiShiny);
-  const nb = makeKai(x, y, lv, rollShiny(parentShiny));
+  const nb = makeKai(x, y, lv, modeRollShiny(parentShiny));
   nb.popAt = now;
   Body.setVelocity(nb, { x: 0, y: -1.5 });
 
-  state.combo = now - state.lastMergeAt < RULES.comboWindowMs ? state.combo + 1 : 1;
+  state.combo = now - state.lastMergeAt < (isJoy ? joyComboWindow(state.joy) : RULES.comboWindowMs) ? state.combo + 1 : 1;
   state.lastMergeAt = now;
   state.mergeCount += 1;
+  if (isJoy) gainJoyEnergy(state.joy);
   state.maxCombo = Math.max(state.maxCombo, state.combo);
   state.topLevel = Math.max(state.topLevel, lv);
   const base = lv * 2 + (state.combo >= 2 ? (state.combo - 1) * lv : 0);
@@ -169,7 +177,7 @@ export function drop() {
   state.current = state.next;
   state.currentShiny = state.nextShiny;
   state.next = randLevel();
-  state.nextShiny = rollShiny();
+  state.nextShiny = modeRollShiny();
   state.canDrop = false;
   clearTimeout(cooldownTimer);
   cooldownTimer = setTimeout(() => { state.canDrop = true; }, RULES.dropCooldownMs);
@@ -180,7 +188,48 @@ function checkDanger(now) {
     now - b.bornAt > RULES.dangerGraceMs && b.bounds.min.y < dangerY() && Math.abs(b.velocity.y) < 1.2);
   if (!risky) { state.dangerSince = 0; return; }
   if (!state.dangerSince) state.dangerSince = now;
-  if (now - state.dangerSince > RULES.dangerHoldMs) gameOver();
+  if (now - state.dangerSince > RULES.dangerHoldMs) {
+    if (isJoy && hasTalent(state.joy, 'rescue') && !state.joy.rescueUsed) {
+      const candidate = kaiBodies().filter(b => !b.merged && b.bounds.min.y < dangerY())
+        .sort((a, b) => a.kaiLevel - b.kaiLevel)[0];
+      if (candidate) {
+        Composite.remove(state.engine.world, candidate);
+        state.joy.rescueUsed = true;
+        state.dangerSince = 0;
+        joyFeedback('绝处逢生！已清除一个越线张楷');
+        saveNow();
+        return;
+      }
+    }
+    gameOver();
+  }
+}
+
+// 技能只在欢乐模式的正常游戏过程中生效。
+export function useJoySkill(skill) {
+  if (!isJoy || !state.engine || state.over || state.paused || !state.canDrop
+      || performance.now() < state.joySkillReadyAt || document.querySelector('.overlay:not([hidden])')) return false;
+  const bodies = kaiBodies().filter(b => !b.merged);
+  if (skill === 'shake' && !bodies.length) { joyFeedback('先投放一个张楷，再摇一摇'); return false; }
+  if (!spendJoyEnergy(state.joy, skill)) return false;
+  if (skill === 'swap') {
+    // 排除手里的等级，保证“换人”真的换；黄金状态保留，不靠换人刷黄金。
+    const weights = spawnWeights(state.topLevel, levelCounts()).map((w, lv) => lv === state.current ? 0 : w);
+    state.current = pickLevel(weights);
+    state.aimX = clampAim(state.current);
+    joyFeedback('换人成功！下一位保持不变');
+  } else {
+    bodies.forEach((b, i) => {
+      const dx = W / 2 - b.position.x;
+      Body.setVelocity(b, { x: Math.max(-3, Math.min(3, b.velocity.x + Math.sign(dx || (i % 2 ? 1 : -1)) * 2.4)), y: -2.2 });
+      Body.setAngularVelocity(b, (i % 2 ? 1 : -1) * 0.04);
+    });
+    joyFeedback('摇一摇！让同级张楷靠近一点');
+  }
+  state.joySkillReadyAt = performance.now() + JOY_RULES.skillCooldownMs;
+  syncJoyUI();
+  saveNow();
+  return true;
 }
 
 // ---------- 快速模拟（只在 ?debug 时挂到 window 上，用来调掉落表）----------
@@ -229,6 +278,7 @@ export function simulateGames({ games = 10, table, thinkMs = 1000, aimRate = 0.7
 // 测试用：当前所有张楷的位置与等级（只在 ?debug 时挂到 window 上）
 export function debugSnapshot() {
   return {
+    mode: isJoy ? 'joy' : 'classic', joy: state.joy, current: state.current, next: state.next,
     over: state.over, paused: state.paused, score: state.score, topLevel: state.topLevel, shinySeen: state.shinySeen,
     bodies: kaiBodies().map(b => ({
       lv: b.kaiLevel, shiny: Boolean(b.kaiShiny), x: b.position.x, y: b.position.y,
@@ -239,6 +289,7 @@ export function debugSnapshot() {
 
 // ---------- 界面 ----------
 export function updateHud() {
+  syncJoyUI();
   document.getElementById('score').textContent = state.score;
   document.getElementById('best').textContent = state.best;
   document.getElementById('ladder').replaceChildren(...skin.map((s, i) => {
@@ -253,6 +304,7 @@ function enterRound(engine) {
   clearTimeout(cooldownTimer);
   resetRound(engine, 0);
   resetEffects();
+  resetJoyUI();
   document.getElementById('win').hidden = true;
   document.getElementById('over').hidden = true;
 }
@@ -260,8 +312,8 @@ function enterRound(engine) {
 export function startGame() {
   enterRound(newEngine());
   state.next = randLevel();
-  state.currentShiny = rollShiny();
-  state.nextShiny = rollShiny();
+  state.currentShiny = modeRollShiny();
+  state.nextShiny = modeRollShiny();
   resetRoundStats();
   clearSave();
   updateHud();
@@ -278,6 +330,7 @@ function snapshotGame() {
       angle: Math.round(b.angle * 1000) / 1000, shiny: Boolean(b.kaiShiny)
     })),
     state: {
+      joy: isJoy ? state.joy : null,
       score: state.score, topLevel: state.topLevel, current: state.current, next: state.next,
       mergeCount: state.mergeCount, maxCombo: state.maxCombo, wonThisGame: state.wonThisGame,
       currentShiny: state.currentShiny, nextShiny: state.nextShiny, shinySeen: state.shinySeen,
@@ -323,6 +376,16 @@ function draw(now) {
     const x = clampAim(state.current);
     ctx.strokeStyle = 'rgba(59,42,20,.18)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(x, FIELD.dropY); ctx.lineTo(x, H); ctx.stroke();
+    if (isJoy && hasTalent(state.joy, 'aim')) {
+      const r = LEVELS[state.current].r;
+      const top = kaiBodies().filter(b => !b.merged && x + r > b.bounds.min.x && x - r < b.bounds.max.x)
+        .reduce((min, b) => Math.min(min, b.bounds.min.y), H);
+      const y = Math.max(FIELD.dropY, top - r);
+      ctx.save();
+      ctx.strokeStyle = '#784ca6'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
     if (state.canDrop) drawKai(ctx, x, FIELD.dropY, LEVELS[state.current].r, state.current, 0, state.currentShiny);
   }
   ctx.font = '13px sans-serif'; ctx.fillStyle = COLORS.muted;
@@ -355,6 +418,7 @@ export function loop(now) {
     state.dangerSince = 0;  // 暂停期间不计越线时间，恢复后重新数 2 秒
   }
   if (!state.over && now - lastSaveAt > AUTOSAVE_MS) saveNow();
+  syncJoyUI();
   draw(now);
   requestAnimationFrame(loop);
 }

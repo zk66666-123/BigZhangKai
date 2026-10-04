@@ -1,9 +1,13 @@
 // 一局游戏的全部状态。物理引擎每帧都在变，这里用一个可变对象集中管理，各模块只读写这一处。
 import { FIELD, STORAGE_KEYS } from './config.js';
 import { store } from './skin.js';
+import { isJoy } from './mode.js';
+import { createJoyRun } from './joy.js';
 
 export const state = {
   engine: null,
+  joy: isJoy ? createJoyRun() : null,
+  joySkillReadyAt: 0,
   score: 0,
   best: Number(store.get(STORAGE_KEYS.best)) || 0,
   topLevel: 0,
@@ -31,7 +35,7 @@ export const state = {
 
 export function resetRound(engine, firstNext) {
   Object.assign(state, {
-    engine,
+    engine, joy: isJoy ? createJoyRun() : null, joySkillReadyAt: 0,
     score: 0, topLevel: 0, current: 0, next: firstNext, currentShiny: false, nextShiny: false, shinySeen: 0, fusions: 0, dangerShift: 0,
     aimX: FIELD.width / 2, canDrop: true, over: false, paused: false, wonThisGame: false,
     dangerSince: 0, mergeCount: 0, maxCombo: 0, startedAt: Date.now(), combo: 0, lastMergeAt: 0

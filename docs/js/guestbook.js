@@ -1,12 +1,12 @@
 // 给张楷的留言墙：所有人都能看，署名用游戏昵称。打开时游戏暂停。
 import { STORAGE_KEYS } from './config.js?v=21648a52';
-import { store } from './skin.js?v=83f93ead';
-import { state } from './state.js?v=5f7e2107';
+import { store } from './skin.js?v=aa0c2609';
+import { state } from './state.js?v=ba9e26bd';
 import { $ } from './dom.js?v=5b57db68';
-import { leaderboardEnabled, postMessage, listMessages, claimName, MESSAGES_PAGE } from './leaderboard.js?v=feae38ca';
+import { leaderboardEnabled, postMessage, listMessages, claimName, MESSAGES_PAGE } from './leaderboard.js?v=2cb916e7';
 import { avatarEl } from './avatar.js?v=a2dafd4d';
-import { renderMeBar } from './profile.js?v=f8ea613e';
-import { onMessage } from './achievements.js?v=6e59b0e1';
+import { renderMeBar } from './profile.js?v=ee09e701';
+import { onMessage } from './achievements.js?v=e679748c';
 
 const MAX_LEN = 200;
 let oldestId = null;

@@ -1,21 +1,24 @@
 // 启动：加载照片 → 开局 → 绑定按钮。链接带 ?test=win / ?test=over（可加 &score=分数）时直接展示庆祝画面 / 示例战报。
 import { FIELD, MAX } from './config.js?v=21648a52';
-import { initSkin } from './skin.js?v=83f93ead';
-import { initCrown } from './draw.js?v=dc853b14';
-import { isMuted, toggleMuted } from './audio.js?v=b9710e55';
-import { state } from './state.js?v=5f7e2107';
-import { copyShare, gameOver } from './report.js?v=a0e11c60';
-import { startGame, restoreGame, loop, fit, bindInput, makeKai, debugSnapshot, simulateGames } from './game.js?v=20cfea15';
-import { readSave } from './save.js?v=17e3bab3';
-import { bindRankboard, flushPending } from './rankboard.js?v=c9fb7455';
-import { bindWelcome, showWelcomeIfNeeded, needsWelcome } from './welcome.js?v=10e1f73a';
-import { bindNotice, showNoticeIfNew } from './notice.js?v=02b974f5';
-import { bindGuestbook } from './guestbook.js?v=51590444';
-import { bindGroup } from './group.js?v=a948b4a7';
-import { syncMyAvatar, syncBadges } from './profile.js?v=f8ea613e';
-import { bindAchievements } from './achieve-ui.js?v=2a181da3';
-import { onMute, unlockedCount } from './achievements.js?v=6e59b0e1';
+import { initSkin } from './skin.js?v=aa0c2609';
+import { initCrown } from './draw.js?v=ece2ed71';
+import { isMuted, toggleMuted } from './audio.js?v=9d2e79bf';
+import { state } from './state.js?v=ba9e26bd';
+import { copyShare, gameOver } from './report.js?v=ee2e844d';
+import { startGame, restoreGame, loop, fit, bindInput, makeKai, debugSnapshot, simulateGames, saveNow, useJoySkill } from './game.js?v=d01ab800';
+import { readSave } from './save.js?v=22768969';
+import { bindRankboard, flushPending } from './rankboard.js?v=7784491a';
+import { bindWelcome, showWelcomeIfNeeded, needsWelcome } from './welcome.js?v=3aaf2742';
+import { bindNotice, showNoticeIfNew } from './notice.js?v=abea878c';
+import { bindGuestbook } from './guestbook.js?v=f906ab5e';
+import { bindGroup } from './group.js?v=d5ba1420';
+import { syncMyAvatar, syncBadges } from './profile.js?v=ee09e701';
+import { bindAchievements } from './achieve-ui.js?v=b20f1bb9';
+import { onMute, unlockedCount } from './achievements.js?v=e679748c';
 import { $ } from './dom.js?v=5b57db68';
+import { isJoy } from './mode.js?v=06a4bc39';
+import { bindJoyUI } from './joy-ui.js?v=274399e7';
+import { bindModePicker } from './mode-ui.js?v=0e623310';
 
 function renderSoundBtn() {
   const muted = isMuted();
@@ -47,6 +50,8 @@ function bindButtons() {
   bindGroup();
   bindAchievements({ onCountChanged: syncBadges });
   renderSoundBtn();
+  bindJoyUI({ useSkill: useJoySkill, save: saveNow, resize: fit });
+  bindModePicker({ save: saveNow });
 }
 
 function runTestHooks() {
@@ -74,6 +79,7 @@ async function boot() {
   fit();
   bindInput();
   bindButtons();
+  fit();
   await Promise.all([initSkin(), initCrown()]);
   // 有上一局的存档就接着玩（测试链接不恢复，免得干扰）
   const saved = /[?&]test=/.test(location.search) ? null : readSave();
@@ -83,7 +89,7 @@ async function boot() {
   } else {
     startGame();
   }
-  if (!/[?&]test=/.test(location.search)) {
+  if (!isJoy && !/[?&]test=/.test(location.search)) {
     const isNewPlayer = needsWelcome();
     showWelcomeIfNeeded();
     showNoticeIfNew({ isNewPlayer });

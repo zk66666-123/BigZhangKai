@@ -1,5 +1,5 @@
 // 群二维码图片可用时才显示入口；到期后更换图片与有效期文案。
-import { state } from './state.js?v=5f7e2107';
+import { state } from './state.js?v=ba9e26bd';
 import { $ } from './dom.js?v=5b57db68';
 
 let pausedByGroup = false;
